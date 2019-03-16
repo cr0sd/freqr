@@ -2,16 +2,34 @@
 #include<stdlib.h>
 #include<math.h>
 #include<inttypes.h>
+#include<string.h>
 
-#define SAMPLESPERSEC 44100
-#define BITSPERSAMPLE 16
-#define BITRATE (BITSPERSAMPLE/SAMPLESPERSEC)
-#define FREQ 440
-#define ONEOSC (SAMPLESPERSEC/FREQ)
-#define MAG 1000
+#define SEMITC pow(2,1/12.0)
 
-#define sq(f,o) (o%(SAMPLESPERSEC/f)<(SAMPLESPERSEC/f)/2?MAG:-MAG)
-// #define tr(f,o) (o%(SAMPLESPERSEC/f)<(SAMPLESPERSEC/f)/2 ? MAG*(o/(SAMPLESPERSEC/f)) : 1/(o/(SAMPLESPERSEC/f))*-MAG)
+#define raisesemi(f,n) (f*pow(SEMITC,(n)))
+// #define sq(f,o,s,a) (o%(s/f)<(s/f)/2?a:-a)
+
+/********
+ * sq(f,o,r,a)
+ * Generate single 50% duty cycle square wave 
+ * at frequency f, offset o, samplerate r, and
+ * (positive) amplitude a
+ * 
+ ********/
+int32_t sq(double f,int32_t o,int32_t r,int32_t a)
+{
+	if(f<=0 ) return 0;
+	return o%(int32_t)(r/f)<(int32_t)(r/f)/2?a:-a;
+}
+
+int32_t tr(double f,int32_t o,int32_t r,int32_t a)
+{
+	if(f<=0 ) return 0;
+	// return 2*a/3.1415926f*asin(sin(2*3.1415926f/((r/f)*o)));
+	// return ((a*((r/f)-(int32_t)fabs(o%(int32_t)(2*(r/f))-(r/f)) ))/(r/f))-(a/2);
+	return pow(-1,o%2+1)*(o%(int32_t)(r/f))*a;
+}
+
 int main(int argc,char **argv)
 {
 	//16 bit integer 44.1kHz
@@ -20,24 +38,45 @@ int main(int argc,char **argv)
 	//dynamic buffering vs static (per sec)
 	//16 bit / 2 bytes per sample @ 44.1k samples per sec = 705.6kB
 	
-	if(argc<2)
+	uint32_t samplerate=44100;
+	uint32_t samples=samplerate;
+	uint8_t bitdepth=16;
+	double f=440;
+	uint32_t a=900;
+	
+	if(argc>1)
 	{
-		printf("sy [freq]\n");
+		for(int i=0;i<argc;i++)
+		{
+			if(argc>i)
+			{
+			     if(strcmp(argv[i],"-f")==0)f=atof(argv[i+1]);
+			else if(strcmp(argv[i],"-b")==0)bitdepth=atoi(argv[i+1]);
+			else if(strcmp(argv[i],"-r")==0)samplerate=atoi(argv[i+1]);
+			else if(strcmp(argv[i],"-s")==0)samples=atoi(argv[i+1]);
+			else if(strcmp(argv[i],"-a")==0)a=atoi(argv[i+1]);
+			}
+			
+		}
+	}
+	else
+	{
+		printf("sy [fbrsa]\n");
 		return 1;
 	}
 	
-	int i=0;
-	int16_t *b=malloc(sizeof(uint16_t)*SAMPLESPERSEC);
+	int16_t *b=malloc(sizeof(int16_t)*samples);
 	if(!b)printf("fail\n");
 	
-	for(i=0;i<SAMPLESPERSEC;i++)
-		b[i]=sq(atoi(argv[1]),i);
-		// b[i]=i%ONEOSC<ONEOSC/2?MAG:-MAG;
+	for(int i=0;i<samples;i++)
+	{
+		b[i]=sq(f,i,samplerate,a);
+		// b[i]+=sq(raisesemi(f,7),i,samplerate,700.0);
+		// b[i]/=2;
+	}
 	
-	fwrite(b,sizeof(uint16_t),SAMPLESPERSEC,stdout); //sizeof(uint16_t)==2 (bytes)!
+	fwrite(b,sizeof(int16_t),samples,stdout); //sizeof(uint16_t)==2 (bytes)!
 	
-	
-	// printf("\nfinished\n");
 	free(b);
 	return 0;
 }
