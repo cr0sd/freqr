@@ -1,7 +1,7 @@
 # freqr
 CLI utility to generate 1-second square wave at specified frequency directly to stdout
 
-Usage: freqr [frsa]
+### Usage: freqr [frsa]
 ________________________
 -f : frequency in audible range (e.g., 'freqr -f 440')
 
@@ -13,7 +13,7 @@ ________________________
 
 
 
-To do
+### To do
 ________________________
 Implement '-b <16/32...>' switch to change bit-depth (defaults to 16-bit)
 
