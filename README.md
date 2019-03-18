@@ -5,7 +5,7 @@ Usage: freqr [frsa]
 ________________________
 -f : frequency in audible range (e.g., 'freqr -f 440')
 
--r : sample rate (defaults to 44100)
+-r : sample rate (defaults to 44100) in samples/second or Hz
 
 -s : number of samples to generate (defaults to 44100, or 1 second of audio)
 
