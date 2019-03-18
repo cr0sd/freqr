@@ -9,6 +9,8 @@
 #define raisesemi(f,n) (f*pow(SEMITC,(n)))
 // #define sq(f,o,s,a) (o%(s/f)<(s/f)/2?a:-a)
 
+FILE *fer;
+
 /********
  * sq(f,o,r,a)
  * Generate single 50% duty cycle square wave 
@@ -18,16 +20,29 @@
  ********/
 int32_t sq(double f,int32_t o,int32_t r,int32_t a)
 {
-	if(f<=0 ) return 0;
+	// if(f<=0) return 0;
 	return o%(int32_t)(r/f)<(int32_t)(r/f)/2?a:-a;
 }
 
 int32_t tr(double f,int32_t o,int32_t r,int32_t a)
 {
-	if(f<=0 ) return 0;
+	// if(f<=0) return 0;
 	// return 2*a/3.1415926f*asin(sin(2*3.1415926f/((r/f)*o)));
 	// return ((a*((r/f)-(int32_t)fabs(o%(int32_t)(2*(r/f))-(r/f)) ))/(r/f))-(a/2);
 	return pow(-1,o%2+1)*(o%(int32_t)(r/f))*a;
+}
+
+int32_t sw(double f,int32_t o,int32_t r,int32_t a)
+{
+	// if(f<=0) return 0;
+	
+	// double rv;
+	// rv=fmod(o,r/f);
+	// rv*=pow(10,-2);
+	// fprintf(fer,"sw rv:%i\n",(int32_t)(rv*a));
+	// return (int32_t)rv*a;
+	double rv=fmod((double)o,((double)r/f))/((double)r/f)*(double)a;
+	return (int32_t)rv;
 }
 
 int main(int argc,char **argv)
@@ -43,6 +58,9 @@ int main(int argc,char **argv)
 	uint8_t bitdepth=16;
 	double f=440;
 	uint32_t a=900;
+	
+	fer=fopen("log.txt","w");
+	if(!fer) return 3;
 	
 	if(argc>1)
 	{
@@ -61,7 +79,7 @@ int main(int argc,char **argv)
 	}
 	else
 	{
-		printf("sy [fbrsa]\n");
+		printf("%s [fbrsa]\n",*argv);
 		return 1;
 	}
 	
@@ -70,7 +88,8 @@ int main(int argc,char **argv)
 	
 	for(int i=0;i<samples;i++)
 	{
-		b[i]=sq(f,i,samplerate,a);
+		b[i]=sw(f,i,samplerate,a);
+		fprintf(fer,"b:%i\n",b[i]);
 		// b[i]+=sq(raisesemi(f,7),i,samplerate,700.0);
 		// b[i]/=2;
 	}
@@ -78,5 +97,6 @@ int main(int argc,char **argv)
 	fwrite(b,sizeof(int16_t),samples,stdout); //sizeof(uint16_t)==2 (bytes)!
 	
 	free(b);
+	fclose(fer);
 	return 0;
 }
