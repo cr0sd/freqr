@@ -11,7 +11,7 @@ ________________________
 
 -a : value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
 
--w : use `sn`, `sq`, `sw`, or `tr` for sine, square, saw, or triangle waves respectively
+-w : use `sn`, `sq`, `sw`, `tr`, or `ns` for sine, square, saw, triangle waves, or noise respectively
 
 ### Notes
 ________________________
