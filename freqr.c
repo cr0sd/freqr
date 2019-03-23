@@ -4,9 +4,6 @@
 #include<inttypes.h>
 #include<string.h>
 
-#include<io.h>
-#include<fcntl.h>
-
 #define SEMITC pow(2,1/12.0)
 
 #define raisesemi(f,n) (f*pow(SEMITC,(n)))
@@ -58,7 +55,8 @@ int main(int argc,char **argv)
 	//dynamic buffering vs static (per sec)
 	//16 bit / 2 bytes per sample @ 44.1k samples per sec = 705.6kB
 	
-	setmode(fileno(stdout),O_BINARY); //only on Windows
+	FILE *fo=fopen("raw.dat","wb");
+	if(!fo)return 4;
 	
 	uint32_t samplerate=44100;
 	uint32_t samples=samplerate;
@@ -120,9 +118,10 @@ int main(int argc,char **argv)
 		fprintf(fer,"b:%i\n",b[i]);
 	}
 	
-	fwrite(b,sizeof(int16_t),samples,stdout); //sizeof(uint16_t)==2 (bytes)!
+	fwrite(b,sizeof(int16_t),samples,fo); //sizeof(uint16_t)==2 (bytes)!
 	
 	free(b);
 	fclose(fer);
+	fclose(fo);
 	return 0;
 }
