@@ -13,8 +13,8 @@
 // #define sq(f,o,s,a) (o%(s/f)<(s/f)/2?a:-a)
 #define pi 3.14159265
 
-enum {SN,SQ,SW,TR};
-char szFn[4][3]={"sn","sq","sw","tr"};
+enum {SN,SQ,SW,TR,NS};
+char szFn[5][3]={"sn","sq","sw","tr","ns"};
 FILE *fer;
 
 /********
@@ -51,6 +51,11 @@ int32_t sw(double f,int32_t o,int32_t r,int32_t a)
 	return fmod((double)(o+(int32_t)(r/f/2.0L)),((double)r/f))/((double)r/f)*(double)a-(a/2.0L);
 }
 
+int32_t ns(double f,int32_t o,int32_t r,int32_t a)
+{
+	return (double)a/2.0L-fmod(rand(),a);
+}
+
 int main(int argc,char **argv)
 {
 	//16 bit integer 44.1kHz
@@ -84,7 +89,7 @@ int main(int argc,char **argv)
 				else if(strcmp(argv[i],"-a")==0)a=atoi(argv[i+1]);
 				else if(strcmp(argv[i],"-w")==0)
 				{
-					for(int j=0;j<4;j++)
+					for(int j=0;j<5;j++)
 						if(strcmp(argv[i+1],szFn[j])==0)
 							fn=j;
 				}
@@ -117,6 +122,9 @@ int main(int argc,char **argv)
 			break;
 		case SW:
 			b[i]=sw(f,i,samplerate,a);
+			break;
+		case NS:
+			b[i]=ns(f,i,samplerate,a);
 			break;
 		case TR:
 			b[i]=tr(f,i,samplerate,a);
