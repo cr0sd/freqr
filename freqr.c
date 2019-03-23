@@ -4,11 +4,17 @@
 #include<inttypes.h>
 #include<string.h>
 
+#include<io.h>
+#include<fcntl.h>
+
 #define SEMITC pow(2,1/12.0)
 
 #define raisesemi(f,n) (f*pow(SEMITC,(n)))
 // #define sq(f,o,s,a) (o%(s/f)<(s/f)/2?a:-a)
+#define pi 3.14159265
 
+enum {SN,SQ,SW,TR};
+char szFn[4][3]={"sn","sq","sw","tr"};
 FILE *fer;
 
 /********
@@ -20,29 +26,28 @@ FILE *fer;
  ********/
 int32_t sq(double f,int32_t o,int32_t r,int32_t a)
 {
-	// if(f<=0) return 0;
 	return o%(int32_t)(r/f)<(int32_t)(r/f)/2?a:-a;
 }
 
 int32_t tr(double f,int32_t o,int32_t r,int32_t a)
 {
-	// if(f<=0) return 0;
 	// return 2*a/3.1415926f*asin(sin(2*3.1415926f/((r/f)*o)));
-	// return ((a*((r/f)-(int32_t)fabs(o%(int32_t)(2*(r/f))-(r/f)) ))/(r/f))-(a/2);
-	return pow(-1,o%2+1)*(o%(int32_t)(r/f))*a;
+	return ((a*((r/f)-(int32_t)fabs(o%(int32_t)(2*(r/f))-(r/f)) ))/(r/f))-(a/2);
 }
 
 int32_t sw(double f,int32_t o,int32_t r,int32_t a)
 {
-	// if(f<=0) return 0;
-	
-	// double rv;
-	// rv=fmod(o,r/f);
-	// rv*=pow(10,-2);
-	// fprintf(fer,"sw rv:%i\n",(int32_t)(rv*a));
-	// return (int32_t)rv*a;
-	double rv=fmod((double)o,((double)r/f))/((double)r/f)*(double)a;
-	return (int32_t)rv;
+	return fmod((double)o,((double)r/f))/((double)r/f)*(double)a;
+}
+/********
+ * sn(f,o,r,a)
+ * Generate sine wave
+ * sn(x,f) = sin( (2*pi)/period * x ) * amplitude
+ * 
+ ********/
+int32_t sn(double f,double o,double r,double a)
+{
+	return sin(((2.0L*pi)/(r/f))*o)*(double)a;
 }
 
 int main(int argc,char **argv)
@@ -53,11 +58,14 @@ int main(int argc,char **argv)
 	//dynamic buffering vs static (per sec)
 	//16 bit / 2 bytes per sample @ 44.1k samples per sec = 705.6kB
 	
+	setmode(fileno(stdout),O_BINARY); //only on Windows
+	
 	uint32_t samplerate=44100;
 	uint32_t samples=samplerate;
 	uint8_t bitdepth=16;
 	double f=440;
 	uint32_t a=900;
+	uint8_t fn=0;
 	
 	fer=fopen("log.txt","w");
 	if(!fer) return 3;
@@ -68,18 +76,24 @@ int main(int argc,char **argv)
 		{
 			if(argc>i)
 			{
-			     if(strcmp(argv[i],"-f")==0)f=atof(argv[i+1]);
-			else if(strcmp(argv[i],"-b")==0)bitdepth=atoi(argv[i+1]);
-			else if(strcmp(argv[i],"-r")==0)samplerate=atoi(argv[i+1]);
-			else if(strcmp(argv[i],"-s")==0)samples=atoi(argv[i+1]);
-			else if(strcmp(argv[i],"-a")==0)a=atoi(argv[i+1]);
+				if(strcmp(argv[i],"-f")==0)f=atof(argv[i+1]);
+				else if(strcmp(argv[i],"-b")==0)bitdepth=atoi(argv[i+1]);
+				else if(strcmp(argv[i],"-r")==0)samplerate=atoi(argv[i+1]);
+				else if(strcmp(argv[i],"-s")==0)samples=atoi(argv[i+1]);
+				else if(strcmp(argv[i],"-a")==0)a=atoi(argv[i+1]);
+				else if(strcmp(argv[i],"-w")==0)
+				{
+					for(int j=0;j<4;j++)
+						if(strcmp(argv[i+1],szFn[j])==0)
+							fn=j;
+				}
 			}
 			
 		}
 	}
 	else
 	{
-		printf("%s [fbrsa]\n",*argv);
+		printf("sy [fbrsa]\n");
 		return 1;
 	}
 	
@@ -88,10 +102,22 @@ int main(int argc,char **argv)
 	
 	for(int i=0;i<samples;i++)
 	{
-		b[i]=sw(f,i,samplerate,a);
+		switch(fn)
+		{
+		case SN:
+		default:
+			b[i]=sn(f,i,samplerate,a);
+			break;
+		case SQ:
+			b[i]=sq(f,i,samplerate,a);
+			break;
+		case SW:
+			b[i]=sw(f,i,samplerate,a);
+			break;
+		case TR:
+			b[i]=tr(f,i,samplerate,a);
+		}
 		fprintf(fer,"b:%i\n",b[i]);
-		// b[i]+=sq(raisesemi(f,7),i,samplerate,700.0);
-		// b[i]/=2;
 	}
 	
 	fwrite(b,sizeof(int16_t),samples,stdout); //sizeof(uint16_t)==2 (bytes)!
