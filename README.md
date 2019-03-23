@@ -19,5 +19,3 @@ ________________________
 ________________________
 Implement '-b <16/32...>' switch to change bit-depth (defaults to 16-bit)
 
-Implement triangle wave function, sawtooth, sine wave...
-
