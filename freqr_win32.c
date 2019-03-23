@@ -43,12 +43,12 @@ int32_t tr(double f,int32_t o,int32_t r,int32_t a)
 {
 	// return 2*a/3.1415926f*asin(sin(2*3.1415926f/((r/f)*o)));
 	// return ((a*((r/f)-(int32_t)fabs(o%(int32_t)(2*(r/f))-(r/f)) ))/(r/f))-(a/2);
-	return ((a*((r/f/2.0L)-(int32_t)fabs(o%(int32_t)(2*(r/f/2.0L))-(r/f/2.0L)) ))/(r/f/2.0L))-(a/2.0L);
+	return ((a*((r/f/2.0L)-(int32_t)fabs((o+(int32_t)(r/f/4.0L))%(int32_t)(2*(r/f/2.0L))-(r/f/2.0L)) ))/(r/f/2.0L))-(a/2.0L);
 }
 
 int32_t sw(double f,int32_t o,int32_t r,int32_t a)
 {
-	return fmod((double)o,((double)r/f))/((double)r/f)*(double)a-(a/2.0L);
+	return fmod((double)(o+(int32_t)(r/f/2.0L)),((double)r/f))/((double)r/f)*(double)a-(a/2.0L);
 }
 
 int main(int argc,char **argv)
@@ -65,7 +65,7 @@ int main(int argc,char **argv)
 	uint32_t samples=samplerate;
 	uint8_t bitdepth=16;
 	double f=440;
-	uint32_t a=900;
+	int32_t a=900;
 	uint8_t fn=0;
 	
 	fer=fopen("log.txt","w");
