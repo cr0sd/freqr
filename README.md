@@ -9,11 +9,14 @@ ________________________
 
 -s : number of samples to generate (defaults to 44100, or 1 second of audio)
 
--a : positive value of unsigned 16 bit integer to indicate maximum amplitude
+-a : value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
 
 -w : use `sn`, `sq`, `sw`, or `tr` for sine, square, saw, or triangle waves respectively
 
-
+### Notes
+________________________
+Triangle and Saw waves are offset by 1/4 and 1/2 the period in order to 'normalize' the
+initial output of their functions to zero
 
 ### To do
 ________________________
