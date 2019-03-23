@@ -15,10 +15,9 @@ ________________________
 
 ### Notes
 ________________________
-Triangle and Saw waves are offset by 1/4 and 1/2 the period in order to 'normalize' the
-initial output of their functions to zero
+Triangle and Saw waves are offset by 1/4 and 1/2 the period respectively, in order to 'normalize' the
+initial output of their functions to zero (this affects phase but is in this writer's opinion beneficial)
 
 ### To do
 ________________________
 Implement '-b <16/32...>' switch to change bit-depth (defaults to 16-bit)
-
