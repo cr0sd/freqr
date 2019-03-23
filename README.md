@@ -1,7 +1,7 @@
 # freqr
 CLI utility to generate 1-second square wave at specified frequency to file
 
-### Usage: freqr [frsa]
+### Usage: freqr [frsa] [w <sn, sq, tr, sw>]
 ________________________
 -f : frequency in audible range (e.g., 'freqr -f 440')
 
@@ -9,7 +9,7 @@ ________________________
 
 -s : number of samples to generate (defaults to 44100, or 1 second of audio)
 
--a : positive value of 16 bit signed integer to indicate maximum amplitude
+-a : positive value of unsigned 16 bit integer to indicate maximum amplitude
 
 -w : use `sn`, `sq`, `sw`, or `tr` for sine, square, saw, or triangle waves respectively
 
