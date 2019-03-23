@@ -1,5 +1,5 @@
 # freqr
-CLI utility to generate 1-second square wave at specified frequency directly to stdout
+CLI utility to generate 1-second square wave at specified frequency to file
 
 ### Usage: freqr [frsa]
 ________________________
