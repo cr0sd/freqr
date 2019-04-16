@@ -1,7 +1,7 @@
 # freqr
 CLI utility to generate 1-second square wave at specified frequency to file
 
-### Usage: freqr [frsa] [w <sn, sq, tr, sw, ns>]
+### Usage: freqr [frsa] [w {sn|sq|tr|sw|ns}]
 ________________________
 -f : frequency in audible range (e.g., 'freqr -f 440')
 
