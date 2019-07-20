@@ -1,6 +1,19 @@
 # freqr
 CLI utility to generate 1-second square wave at specified frequency to file
 
+### Introduction
+
+Try this:
+
+`cc freqr.c -o freqr -lm`
+
+`./freqr -f 440`
+
+`sox -b 16 -c 1 -r 44100 -e signed-integer -t raw raw.dat -t wav raw.wav`
+
+`play raw.wav`
+
+
 ### Usage: freqr [frsa] [w {sn|sq|tr|sw|ns}]
 ________________________
 -f : frequency in audible range (e.g., 'freqr -f 440')
