@@ -1,36 +1,36 @@
 # freqr
 CLI utility to generate 1-second square wave at specified frequency to file
 
-### Introduction
+#### Introduction
 
-Try this:
+  Try this:
 
-`cc freqr.c -o freqr -lm`
+  `cc freqr.c -o freqr -lm`
 
-`./freqr -f 440`
+  `./freqr -f 440`
 
-`sox -b 16 -c 1 -r 44100 -e signed-integer -t raw raw.dat -t wav raw.wav`
+  `sox -b 16 -c 1 -r 44100 -e signed-integer -t raw raw.dat -t wav raw.wav`
 
-`play raw.wav`
+  `play raw.wav`
 
 
-### Usage: freqr [frsa] [w {sn|sq|tr|sw|ns}]
-________________________
--f : frequency in audible range (e.g., 'freqr -f 440')
+#### Usage: freqr [frsa] [w {sn|sq|tr|sw|ns}]
 
--r : sample rate (defaults to 44100) in samples/second or Hz
+  -f : frequency in audible range (e.g., 'freqr -f 440')
 
--s : number of samples to generate (defaults to 44100, or 1 second of audio)
+  -r : sample rate (defaults to 44100) in samples/second or Hz
 
--a : value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
+  -s : number of samples to generate (defaults to 44100, or 1 second of audio)
 
--w : use `sn`, `sq`, `sw`, `tr`, or `ns` for sine, square, saw, triangle waves, or noise respectively
+  -a : value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
 
-### Notes
-________________________
-Triangle and Saw waves are offset by 1/4 and 1/2 the period respectively, in order to 'normalize' the
-initial output of their functions to zero (this affects phase but is in this writer's opinion beneficial)
+  -w : use `sn`, `sq`, `sw`, `tr`, or `ns` for sine, square, saw, triangle waves, or noise respectively
 
-### To do
-________________________
-Implement '-b <16/32...>' switch to change bit-depth (defaults to 16-bit)
+#### Notes
+
+  Triangle and Saw waves are offset by 1/4 and 1/2 the period respectively, in order to 'normalize' the
+  initial output of their functions to zero (this affects phase but is in this writer's opinion beneficial)
+
+#### To do
+
+  Implement '-b <16/32...>' switch to change bit-depth (defaults to 16-bit)
