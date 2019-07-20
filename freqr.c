@@ -96,7 +96,7 @@ int main(int argc,char **argv)
 	}
 	else
 	{
-		printf("sy [fbrsa]\n");
+		printf("Usage: %s [frsa] [w {sn|sq|tr|sw|ns}]\n",*argv);
 		return 1;
 	}
 	
