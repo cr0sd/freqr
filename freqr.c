@@ -4,6 +4,14 @@
 #include<inttypes.h>
 #include<string.h>
 
+#if defined(COMPILE_FOR_WINDOWS) || defined(_WIN32)
+#	ifndef COMPILE_FOR_WINDOWS
+#		define COMPILE_FOR_WINDOWS
+#	endif
+#	include<io.h>
+#	include<fcntl.h>
+#endif
+
 #define SEMITC pow(2,1/12.0)
 
 #define raisesemi(f,n) (f*pow(SEMITC,(n)))
@@ -12,7 +20,7 @@
 
 enum {SN,SQ,SW,TR,NS};
 char szFn[5][3]={"sn","sq","sw","tr","ns"};
-FILE *fer;
+//FILE *fer;
 
 /********
  * sn(f,o,r,a)
@@ -57,22 +65,27 @@ int main(int argc,char **argv)
 {
 	//16 bit integer 44.1kHz
 	//16 bit signed int range = ( -32,768 to 32,767 )
-	
+
 	//dynamic buffering vs static (per sec)
 	//16 bit / 2 bytes per sample @ 44.1k samples per sec = 705.6kB
-	
-	FILE *fo=fopen("raw.dat","wb");
-	
+
+	#ifdef COMPILE_FOR_WINDOWS
+ 	setmode(fileno(stdout),O_BINARY); //only on Windows
+	#endif
+
+	//FILE *output_file=fopen("raw.dat","wb");
+	FILE*output_file=stdout;
+
 	uint32_t samplerate=44100;
 	uint32_t samples=samplerate;
-	uint8_t bitdepth=16;
+	//uint8_t bitdepth=16;
 	double f=440;
 	int32_t a=900;
 	uint8_t fn=0;
-	
-	fer=fopen("log.txt","w");
-	if(!fer) return 3;
-	
+
+	//fer=fopen("log.txt","w");
+	//if(!fer) return 3;
+
 	if(argc>1)
 	{
 		for(int i=0;i<argc;i++)
@@ -80,7 +93,7 @@ int main(int argc,char **argv)
 			if(argc>i)
 			{
 				if(strcmp(argv[i],"-f")==0)f=atof(argv[i+1]);
-				else if(strcmp(argv[i],"-b")==0)bitdepth=atoi(argv[i+1]);
+				//else if(strcmp(argv[i],"-b")==0)bitdepth=atoi(argv[i+1]);
 				else if(strcmp(argv[i],"-r")==0)samplerate=atoi(argv[i+1]);
 				else if(strcmp(argv[i],"-s")==0)samples=atoi(argv[i+1]);
 				else if(strcmp(argv[i],"-a")==0)a=atoi(argv[i+1]);
@@ -90,22 +103,35 @@ int main(int argc,char **argv)
 						if(strcmp(argv[i+1],szFn[j])==0)
 							fn=j;
 				}
+				else if(strcmp(argv[i],"-o")==0)
+				{
+					if(output_file!=stdout)
+						printf("%s: warning: output file already specified",*argv);
+					else
+						output_file=fopen(argv[i+1],"wb");
+				}
 			}
-			
+
 		}
 	}
 	else
 	{
-		printf("Usage: %s [frsa] [w {sn|sq|tr|sw|ns}]\n",*argv);
+		printf("Usage: %s [-f] [-r] [-s] [-a] [-o] [-w {sn|sq|tr|sw|ns}]\n",*argv);
+		puts("\t-f FREQ\t\tFrequency");
+		puts("\t-r SAMPLERATE\tSample rate(e.g., -s 44100)");
+		puts("\t-s NUM_SAMPLES\tNumber of samples");
+		puts("\t-a AMPLITUDE\tAmplitude (16-bit int)");
+		puts("\t-w WAVEFORM\tOne of: sn,sq,tr,sw,ns");
+		puts("\t-o OUTPUTFILE\tSpecify file to output to");
 		return 1;
 	}
-	
-	
-	fprintf(fer,"fn:%s\n",szFn[fn]);
-	
+
+
+	//fprintf(fer,"fn:%s\n",szFn[fn]);
+
 	int16_t *b=malloc(sizeof(int16_t)*samples);
 	if(!b)printf("fail\n");
-	
+
 	for(int i=0;i<samples;i++)
 	{
 		switch(fn)
@@ -126,16 +152,21 @@ int main(int argc,char **argv)
 		case TR:
 			b[i]=tr(f,i,samplerate,a);
 		}
-		fprintf(fer,"b:%i\n",b[i]);
-		
+		//fprintf(fer,"b:%i\n",b[i]);
+
 		// b[i]+=sq(raisesemi(f,7),i,samplerate,700.0);
 		// b[i]/=2;
 	}
-	
-	fwrite(b,sizeof(int16_t),samples,fo);
-	
+
+
+	#ifdef COMPILE_FOR_WINDOWS
+ 	fwrite(b,sizeof(int16_t),samples,stdout); //sizeof(uint16_t)==2 (bytes)!
+	#else
+	fwrite(b,sizeof(int16_t),samples,output_file);
+	#endif
+
 	free(b);
-	fclose(fer);
-	fclose(fo);
+	//fclose(fer);
+	fclose(output_file);
 	return 0;
 }
