@@ -11,9 +11,9 @@ CLI utility to generate 1-second square wave at specified frequency to file
 
   `./freqr -f 440 -o myaudio.dat`
 
-  `./raw2wav.sh myaudio.dat myaudio.wav`
+  `./raw2wav.sh myaudio.dat`
 
-  `play myaudio.wav`
+  `play myaudio.dat.wav`
 
 
 #### Usage: ./freqr [-f] [-r] [-s] [-a] [-o] [-w {sn|sq|tr|sw|ns}]

@@ -3,9 +3,9 @@
 _this=raw2wav.sh
 
 # Get input file
-if [ $# = 0 ]; then
-	echo "$_this: Usage: $_this [inputfile [outputfile]]"
-	_inputfile="raw.dat"
+if [ $# -lt 1 ]; then
+	echo "$_this: Usage: $_this <inputfile> [<outputfile>]"
+	exit
 else
 	_inputfile=$1
 	if [ -f $_inputfile ]; then
@@ -18,12 +18,14 @@ fi
 
 # Get output file
 if [ $# -lt 2 ]; then
-	_outputfile="raw.wav"
+	_outputfile="$_inputfile.wav"
 else
 	_outputfile=$2
-	if [ -f $_outputfile ]; then
-		echo "$_this: Warning: \"$_outputfile\" exists. Overwriting."
-	fi
+fi
+
+# Check if outputfile exists already
+if [ -f $_outputfile ]; then
+	echo "$_this: Warning: \"$_outputfile\" exists. Overwriting."
 fi
 
 # Create 'raw.wav' from 'raw.dat'
