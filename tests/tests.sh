@@ -28,3 +28,5 @@ do
 		exit 2
 	fi
 done
+
+echo "Tests complete."
