@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/cr0sd/freqr.svg?branch=master)](https://travis-ci.com/cr0sd/freqr)
+
 # freqr
 CLI utility to generate 1-second square wave at specified frequency to file
 
