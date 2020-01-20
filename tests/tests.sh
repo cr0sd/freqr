@@ -29,4 +29,6 @@ do
 	fi
 done
 
-echo "Tests complete."
+if [ $_clean = 0 ]; then
+	echo "Tests complete."
+fi
