@@ -1,18 +1,18 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 _this=raw2wav.sh
 
 # Get input file
 if [ $# -lt 1 ]; then
 	echo "$_this: Usage: $_this <inputfile> [<outputfile>]"
-	exit
+	exit 1
 else
 	_inputfile=$1
 	if [ -f $_inputfile ]; then
 		:
 	else
 		echo "$_this: Error: Could not find input file \"$_inputfile\". Exiting"
-		exit
+		exit 2
 	fi
 fi
 
