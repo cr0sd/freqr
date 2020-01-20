@@ -5,31 +5,35 @@ CLI utility to generate 1-second square wave at specified frequency to file
 
   Try this:
 
-  `cc freqr.c -o freqr -lm`
+  `pacman -S sox` or `apt install sox`
 
-  `./freqr -f 440`
+  `make`
 
-  `sox -b 16 -c 1 -r 44100 -e signed-integer -t raw raw.dat -t wav raw.wav`
+  `./freqr -f 440 -o myaudio.dat`
 
-  `play raw.wav`
+  `./raw2wav.sh myaudio.dat myaudio.wav`
+
+  `play myaudio.wav`
 
 
-#### Usage: freqr [frsa] [w {sn|sq|tr|sw|ns}]
+#### Usage: ./freqr [-f] [-r] [-s] [-a] [-o] [-w {sn|sq|tr|sw|ns}]
 
-  -f : frequency in audible range (e.g., 'freqr -f 440')
+	-f FREQ		Frequency			frequency in audible range (e.g., 'freqr -f 440')
 
-  -r : sample rate (defaults to 44100) in samples/second or Hz
+	-r SAMPLERATE	Sample rate(e.g., -s 44100)	sample rate (defaults to 44100) in samples/second or Hz
 
-  -s : number of samples to generate (defaults to 44100, or 1 second of audio)
+	-s NUM_SAMPLES	Number of samples		number of samples to generate (defaults to 44100, or 1 second of audio)
 
-  -a : value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
+	-a AMPLITUDE	Amplitude (16-bit int)		value of signed 16 bit integer to indicate maximum amplitude (notice negatives invert the waveform)
 
-  -w : use `sn`, `sq`, `sw`, `tr`, or `ns` for sine, square, saw, triangle waves, or noise respectively
+	-w WAVEFORM	One of: sn,sq,tr,sw,ns		sine, square, triangle, saw, noise
+
+	-o OUTPUTFILE	Specify file to output to
 
 #### Notes
 
   Triangle and Saw waves are offset by 1/4 and 1/2 the period respectively, in order to 'normalize' the
-  initial output of their functions to zero (this affects phase but is in this writer's opinion beneficial)
+  initial output of their functions to zero (this affects phase but is worth the quality improvement IMHO)
 
 #### To do
 
