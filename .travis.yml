@@ -1,3 +1,4 @@
+language: gcc
 before_install:
 - sudo apt update
 - sudo apt -y install sox
