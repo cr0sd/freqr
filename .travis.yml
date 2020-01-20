@@ -1,8 +1,9 @@
 language: c
 before_install:
-- sudo apt-get update
-- sudo apt-get -y install sox
-os: linux
+- sudo apt update
+- sudo apt -y install sox
+os:
+- linux
 script:
 - make
 - make tests

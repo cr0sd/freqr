@@ -6,7 +6,8 @@ ifeq ($(OS),Windows_NT)
 CFLAGS += -DCOMPILE_FOR_WINDOWS
 endif
 
-all:freqr
+all:
+	$(CC) freqr.c -o freqr $(CFLAGS) $(LDFLAGS)
 tests:freqr
 	tests/tests.sh
 clean:
